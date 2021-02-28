@@ -32,7 +32,6 @@ class _LoginPageState extends State<LoginPage> {
             TextField(
               controller: _usernameController,
               decoration: InputDecoration(
-                filled: true,
                 labelText: 'Username',
               ),
             ),
@@ -40,7 +39,6 @@ class _LoginPageState extends State<LoginPage> {
             TextField(
               controller: _passwordController,
               decoration: InputDecoration(
-                filled: true,
                 labelText: 'Password',
               ),
               obscureText: true,
@@ -55,6 +53,8 @@ class _LoginPageState extends State<LoginPage> {
                     child: Text('CANCEL')
                 ),
                 RaisedButton(
+                    color: Colors.blue,
+                    elevation: 5.0 ,
                     child: Text('NEXT'),
                     onPressed: (){
                       Navigator.pop(context);
@@ -66,6 +66,5 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
-    throw UnimplementedError();
   }
 }
