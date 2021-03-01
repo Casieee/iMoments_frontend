@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:photo_view/photo_view.dart';
 import 'galleryShow.dart';
 import 'dart:math';
 
@@ -8,20 +7,24 @@ class GalleryPage extends StatefulWidget {
   GalleryPageState createState() => new GalleryPageState();
 }
 
-class GalleryPageState extends State<GalleryPage> {
-  int _imageCounter = 0;
+class GalleryPageState extends State<GalleryPage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  int _imageCounter = -1;
   int number = 0;
   var ran = new Random();
+  List<Image> _images = [];
 
-  List<Image> _images = List<Image>.generate(
-      50, (i) => Image.network(
-    'http://1.15.86.128/resource/img/2/${10 * i + 1}.jpg',
-    fit: BoxFit.cover,
-  ),
-  );
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -65,9 +68,10 @@ class GalleryPageState extends State<GalleryPage> {
           ),
           itemBuilder: (context, index) {
             if(index ~/ 50 != _imageCounter) {
+              number = ran.nextInt(1500);
               List<Image> _moreImages = List<Image>.generate(
                 50, (i) => Image.network(
-                'http://1.15.86.128/resource/img/2/${ran.nextInt(1500) + 10 * i}.jpg',
+                'http://1.15.86.128/resource/img/2/${number + 10 * i}.jpg',
                 fit: BoxFit.cover,
               ),
               );
@@ -79,8 +83,8 @@ class GalleryPageState extends State<GalleryPage> {
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) {
-                    print(number);
-                    return GalleryShowPage(index: number,);
+                    print('number: $number');print('index : $index');
+                    return GalleryShowPage(index: number + 10 * (index % 50) ,);
                   },
                 ));
               },

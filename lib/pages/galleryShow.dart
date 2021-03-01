@@ -1,9 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
 class GalleryShowPage extends StatefulWidget {
-  int index;
+  final int index;
   GalleryShowPage({this.index});
 
   @override
@@ -11,12 +12,14 @@ class GalleryShowPage extends StatefulWidget {
 }
 
 class _GalleryShowPageState extends State<GalleryShowPage> {
+  double _deltaY = 0;
   int currentIndex = 0;
   int initialIndex;
   int title;
 
   @override
   void initState() {
+    print('initialIndex');
     currentIndex = widget.index;
     initialIndex = widget.index;
     title = initialIndex + 1;
@@ -25,8 +28,8 @@ class _GalleryShowPageState extends State<GalleryShowPage> {
 
   void onPageChanged(int index) {
     setState(() {
-      currentIndex = index;
-      title = index + 1;
+      currentIndex = initialIndex + (49 - index) * 10;
+      title = currentIndex;
     });
   }
 
@@ -46,10 +49,13 @@ class _GalleryShowPageState extends State<GalleryShowPage> {
             PhotoViewGallery.builder(
               scrollDirection: Axis.horizontal,
               scrollPhysics: const BouncingScrollPhysics(),
+              pageController: PageController(initialPage: initialIndex), //点进去哪页默认就显示哪一页
+              onPageChanged: onPageChanged,
+              reverse: true,
               itemCount: 50,
               builder: (BuildContext context, int index) {
                 return PhotoViewGalleryPageOptions(
-                  imageProvider: NetworkImage('http://1.15.86.128/resource/img/1/${index+1}.jpg'),
+                  imageProvider: NetworkImage('http://1.15.86.128/resource/img/1/${initialIndex + (49 - index) * 10}.jpg'),
                   initialScale: PhotoViewComputedScale.contained * 1,
                   minScale: PhotoViewComputedScale.contained * 1,
                 );
@@ -57,8 +63,6 @@ class _GalleryShowPageState extends State<GalleryShowPage> {
               backgroundDecoration: BoxDecoration(
                 color: Colors.black,
               ),
-              pageController: PageController(initialPage: initialIndex), //点进去哪页默认就显示哪一页
-              onPageChanged: onPageChanged,
             ),
             Container(
               padding: const EdgeInsets.all(20.0),
@@ -68,6 +72,17 @@ class _GalleryShowPageState extends State<GalleryShowPage> {
               ),
             ),
             GestureDetector(
+              onVerticalDragStart: (DragStartDetails details) {
+                _deltaY = 0;
+              },
+              onVerticalDragUpdate: (DragUpdateDetails details) {
+                _deltaY += details.delta.dy;
+              },
+              onVerticalDragEnd: (DragEndDetails details){
+                if(_deltaY > 100 || _deltaY < -100) {
+                  Navigator.of(context).pop(this);
+                }
+              },
               onTap: () {
                 Navigator.of(context).pop(this);
               },
