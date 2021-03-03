@@ -19,7 +19,6 @@ class _GalleryShowPageState extends State<GalleryShowPage> {
 
   @override
   void initState() {
-    print('initialIndex');
     currentIndex = widget.index;
     initialIndex = widget.index;
     title = initialIndex + 1;
@@ -87,6 +86,7 @@ class _GalleryShowPageState extends State<GalleryShowPage> {
                 Navigator.of(context).pop(this);
               },
             ),
+
           ],
         ),
       ),

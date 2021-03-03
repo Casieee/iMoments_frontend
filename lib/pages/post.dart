@@ -1,10 +1,13 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+import 'package:dio/dio.dart';
+import '../colors.dart';
 
 class PostPage extends StatefulWidget {
   @override
@@ -19,7 +22,6 @@ class _PostPageState extends State<PostPage>
   List _filePath = [];
   final picker = ImagePicker();
 
-
   Future getImage() async {
     var image = await picker.getImage(source: ImageSource.gallery);
     setState(() {
@@ -30,6 +32,24 @@ class _PostPageState extends State<PostPage>
   @override
   void initState() {
     super.initState();
+  }
+
+  void deleteImage(int index) {
+    _filePath.removeAt(index);
+    setState(() {
+    });
+  }
+
+  _upLoadImage(var imagePath) async {
+    FormData formData = FormData.fromMap({
+      "file": await MultipartFile.fromFile(imagePath),
+    });
+
+    Dio dio = Dio();
+    var response = await dio.post('https://www.imoments.com.cn:8080/graphic', data: formData);
+    if (response.statusCode == 200) {
+      print(response.data);
+    }
   }
 
   @override
@@ -52,11 +72,29 @@ class _PostPageState extends State<PostPage>
             )
           ),
         ),
+        actions: [
+          Container(
+            margin: EdgeInsets.all(10),
+            width: 70,
+            child: RaisedButton(
+              elevation: 2.0,
+              child: Text('完成'),
+              color: _filePath.isEmpty ? null : iMomentsBlueButton,
+              onPressed: () {
+                for(var path in _filePath) {
+                  _upLoadImage(path);
+                }
+              },
+            ),
+          )
+        ],
       ),
       body: Column(
         children: <Widget>[
-          SizedBox(height: 5,),
+          TextField(),
           GridView.builder(
+            padding: EdgeInsets.all(5),
+            physics: NeverScrollableScrollPhysics(),
             shrinkWrap: true,
               itemCount: _filePath.length == 9? _filePath.length: 9,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount (
@@ -69,27 +107,152 @@ class _PostPageState extends State<PostPage>
                 if((_filePath.isEmpty && position == 0) || position == _filePath.length) {
                   return GestureDetector(
                     onTap: getImage,
-                    child: Icon(
-                      Icons.add,
-                      size: 40,
+                    child: Container(
+                      color: Colors.grey[200],
+                      child: Icon(
+                        Icons.add,
+                        size: 40,
+                      ),
                     ),
                   );
                 }
                 else {
                   return GestureDetector(
                     onTap: () {
-
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) {
+                          return ShowImage(filePath: _filePath, index: position,);
+                        },
+                      ));
                     },
-                    child: Container(
-                      child: _filePath.length > position ?
+                    onLongPress: () {
+                      showDialog (
+                          context: context,
+                          builder: (BuildContext context) {
+                            return SimpleDialog(
+
+                              title: Text(
+                                  '删除图片'
+                              ),
+                              children: <Widget>[
+                                ButtonBar(
+                                  children: <Widget>[
+                                    FlatButton(
+                                        child: Text('是'),
+                                        onPressed: () {
+                                          deleteImage(position);
+                                          Navigator.of(context).pop(1);
+                                        }
+                                        ),
+                                    FlatButton(
+                                        child: Text('否'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop(1);
+                                        },
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            );
+                          }
+                      );
+                    },
+                    child: _filePath.length > position ?
                       Image.file(File(_filePath[position]), fit: BoxFit.cover,):
                       Container(),
-                    ),
                   );
                 }
               }
           ),
         ],
+      ),
+    );
+  }
+}
+
+class ShowImage extends StatefulWidget {
+  final List filePath;
+  final int index;
+  ShowImage({this.filePath, this.index});
+  @override
+  _ShowImageState createState() => _ShowImageState();
+}
+
+class _ShowImageState extends State<ShowImage> {
+  List _filePath;
+  int currentIndex = 0;
+  int initialIndex;
+
+  @override
+  void initState() {
+    _filePath = widget.filePath;
+    initialIndex = widget.index;
+    super.initState();
+  }
+
+  void _onPageChanged(int index) {
+    currentIndex = index;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          color: Colors.black,
+        ),
+        constraints: BoxConstraints.expand(
+          height: MediaQuery.of(context).size.height,
+        ),
+        child: Stack(
+          children: <Widget>[
+            PhotoViewGallery.builder(
+              scrollDirection: Axis.horizontal,
+              scrollPhysics: const BouncingScrollPhysics(),
+              pageController: PageController(initialPage: initialIndex),
+              reverse: false,
+              onPageChanged: _onPageChanged,
+              itemCount: _filePath.length,
+              builder: (BuildContext context, int index) {
+                return PhotoViewGalleryPageOptions(
+                  imageProvider: FileImage(File(_filePath[index])),
+                  initialScale: PhotoViewComputedScale.contained * 1,
+                  minScale: PhotoViewComputedScale.contained * 1,
+                );
+              },
+              backgroundDecoration: BoxDecoration(
+                color: Colors.black,
+              ),
+            ),
+            GestureDetector(
+              onLongPress: () {
+                showModalBottomSheet(
+                    context: context,
+                    builder: (builder){
+                      return Container(
+                        color: Colors.transparent,
+                        height: 60,
+                        child: Column(
+                          children: <Widget>[
+                            FlatButton(
+                                onPressed: () {
+                                  //todo: 保存图片
+                                },
+                                child: Text('保存图片')
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                );
+
+              },
+              onTap: () {
+                Navigator.of(context).pop(this);
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

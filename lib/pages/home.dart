@@ -1,21 +1,16 @@
 import 'package:flutter/material.dart';
+import 'Settings.dart';
+import 'FullScreen.dart';
+import 'MyFavorite.dart';
+import 'MyMomentsPage.dart';
+import '../userInfo.dart';
+import 'package:image_picker/image_picker.dart';
 
-String userName = "青铜葵花";
-
-/*class IMoments extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: "iMomentsPage",
-      home: HomePage(),
-    );
-  }
-}
-*/
 class HomePage extends StatefulWidget {
   @override
   _HomePage createState() => _HomePage();
 }
+
 class _HomePage extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
@@ -29,14 +24,20 @@ class _HomePage extends State<HomePage> {
             ),
             child: Row(
               children: <Widget>[
-                Container(
-                  width: 100,
-                  margin: const EdgeInsets.only(left: 20, top: 25),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black, ),
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      image: AssetImage("assets/loadingPic.png"),
+                GestureDetector(
+                  onTap: _showModalBottomSheet,
+                  child: Container(
+                    width: 100,
+                    margin: const EdgeInsets.only(left: 20, top: 25),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.black,
+                      ),
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        image: AssetImage(Global.image.path),
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
                 ),
@@ -46,11 +47,18 @@ class _HomePage extends State<HomePage> {
                     children: [
                       Container(
                         alignment: Alignment.topLeft,
-                        margin: const EdgeInsets.only(bottom: 12,),
-                        child: Text(userName, style: TextStyle(fontSize: 20,),),
+                        margin: const EdgeInsets.only(
+                          bottom: 12,
+                        ),
+                        child: Text(
+                          Global.userName,
+                          style: TextStyle(
+                            fontSize: 20,
+                          ),
+                        ),
                       ),
                       Container(
-                        child: Text("      ID:DongD_0706"),
+                        child: Text("      ID: DongD_0706"),
                       )
                     ],
                   ),
@@ -58,7 +66,8 @@ class _HomePage extends State<HomePage> {
               ],
             ),
           ),
-          GestureDetector( //我的动态
+          /*我的动态*/
+          InkWell(
             onTap: () {
               Navigator.push(context, MaterialPageRoute(builder: (_) {
                 return MyMomentsPage();
@@ -67,9 +76,6 @@ class _HomePage extends State<HomePage> {
             child: Container(
               height: 50,
               margin: const EdgeInsets.only(top: 10),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black54, width: 1),
-              ),
               child: Row(
                 children: <Widget>[
                   Container(
@@ -89,7 +95,12 @@ class _HomePage extends State<HomePage> {
               ),
             ),
           ),
-          GestureDetector( //收藏
+          Divider(
+            height: 1,
+            thickness: 1,
+          ),
+          /*收藏*/
+          InkWell(
             onTap: () {
               Navigator.push(context, MaterialPageRoute(builder: (_) {
                 return MyFavorite();
@@ -98,9 +109,6 @@ class _HomePage extends State<HomePage> {
             child: Container(
               height: 50,
               margin: const EdgeInsets.only(top: 10),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black54, width: 1),
-              ),
               child: Row(
                 children: <Widget>[
                   Container(
@@ -120,7 +128,12 @@ class _HomePage extends State<HomePage> {
               ),
             ),
           ),
-          GestureDetector( //设置
+          Divider(
+            height: 1,
+            thickness: 1,
+          ),
+          /*设置*/
+          InkWell(
             onTap: () {
               Navigator.push(context, MaterialPageRoute(builder: (_) {
                 return Settings();
@@ -129,9 +142,9 @@ class _HomePage extends State<HomePage> {
             child: Container(
               height: 50,
               margin: const EdgeInsets.only(top: 10),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black54, width: 1),
-              ),
+              // decoration: BoxDecoration(
+              //   border: Border.all(color: Colors.black54, width: 1),
+              // ),
               child: Row(
                 children: <Widget>[
                   Container(
@@ -151,146 +164,79 @@ class _HomePage extends State<HomePage> {
               ),
             ),
           ),
+          Divider(
+            height: 1,
+            thickness: 1,
+          )
         ],
       ),
     );
   }
 
-}
-class MyMomentsPage extends StatefulWidget{
-  @override
-  _MyMomentsPage createState() => _MyMomentsPage();
-}
-class _MyMomentsPage extends State<MyMomentsPage> {
-  @override
-  Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: AppBar(
-        title: const Text("我的动态"),
-        actions: [
-          Icon(Icons.search),
-        ],
-      ),
-      body: Column(
-        children: [
-        ],
-      ),
-    );
+  /*拍照*/
+  _takePhoto() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.camera);
+
+    setState(() {
+      //imgPath = image;
+    });
   }
-}
-class MyFavorite extends StatefulWidget{
-  @override
-  _MyFavorite createState() => _MyFavorite();
-}
-class _MyFavorite extends State<MyFavorite>{
-  @override
-  // ignore: missing_return
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("收藏"),
-      ),
-    );
+
+  /*相册*/
+  _openGallery() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      //imgPath = image;
+    });
   }
-}
-class Settings extends StatefulWidget{
-  @override
-  _Settings createState() => _Settings();
-}
-class _Settings extends State<Settings> {
-  @override
-  Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: AppBar(
-        title: Text("设置"),
-      ),
-      body: Column(
-        children: [
-          GestureDetector(
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) {
-                return EditName();
-              }));},
-            child: Container(
-              height: 60,
-              margin: const EdgeInsets.only(top: 10),
-              decoration: BoxDecoration(
-                border: Border.all(color: Color.fromRGBO(200, 200, 200, 50), width: 1),
-              ),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Container(
-                      child: Text("昵称"),
-                      margin: const EdgeInsets.only(left: 20,),
-                    ),
-                  ),
-                  Container(
-                    child: Text("青铜葵花"),
-                  ),
-                  Expanded(
-                    child: Container(
-                      child: Icon(Icons.keyboard_arrow_right),
-                      alignment: Alignment.centerRight,
-                    ),
-                  )
-                ],
-              ),
+
+  /*底部菜单栏*/
+  Future<String> _showModalBottomSheet() {
+    return showModalBottomSheet<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return new Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            new ListTile(
+              onTap: () {
+                _openGallery();
+              },
+              leading: new Icon(Icons.photo_library),
+              title: new Text("从相册中选择图片"),
             ),
-          ),
-          GestureDetector(
-            onTap: null,
-            child: Container(
-              height: 60,
-              margin: const EdgeInsets.only(top: 10),
-              decoration: BoxDecoration(
-                border: Border.all(color: Color.fromRGBO(200, 200, 200, 50), width: 1),
-              ),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Container(
-                      child: Text("头像"),
-                      margin: const EdgeInsets.only(left: 20,),
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      child: Icon(Icons.keyboard_arrow_right),
-                      alignment: Alignment.centerRight,
-                    ),
-                  )
-                ],
-              ),
+            new ListTile(
+              onTap: () {
+                _takePhoto();
+              },
+              leading: new Icon(Icons.photo_camera),
+              title: new Text("拍照"),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-class EditName extends StatefulWidget{
-  @override
-  _EditName createState() => _EditName();
-}
-class _EditName extends State<EditName>{
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("编辑昵称"),
-        actions: [
-          Icon(Icons.save)
-        ],
-      ),
-      body: TextField(
-        decoration: InputDecoration(
-          hintText: "请输入修改后的昵称",
-          labelText: "昵称",
-        ),
-        controller: new TextEditingController(),
-        onChanged: (_) { userName = "你的东东";},
-      ),
+            new ListTile(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (_) {
+                  return FullScreen();
+                }));
+              },
+              leading: new Icon(Icons.panorama_fish_eye),
+              title: new Text("查看大图"),
+            ),
+            /*空行*/
+            new Container(
+              height: 5,
+              color: Colors.grey,
+            ),
+            new ListTile(
+                onTap: () {
+                  Navigator.of(context).pop();
+                }, //返回上一页
+                title: Container(
+                  child: new Text("取消"),
+                  alignment: Alignment.center,
+                )),
+          ],
+        );
+      },
     );
   }
 }

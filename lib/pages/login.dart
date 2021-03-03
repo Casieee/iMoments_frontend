@@ -37,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
                     width: 150,
                   ),
                   SizedBox(height: 16.0),
-                  Text('iMoments'),
+                  Text('iMoments', style: TextStyle(fontSize: 20),),
                 ],
               ),
               SizedBox(height: 100.0),
@@ -125,6 +125,14 @@ class _LoginPageState extends State<LoginPage> {
                       }
                     },
                   ),
+
+                  FlatButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text('调试用')
+                  ),
+
                 ],
               ),
               SizedBox(height: 80,),
