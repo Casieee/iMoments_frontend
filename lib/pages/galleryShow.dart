@@ -55,7 +55,7 @@ class _GalleryShowPageState extends State<GalleryShowPage> {
               itemCount: 50,
               builder: (BuildContext context, int index) {
                 return PhotoViewGalleryPageOptions(
-                  imageProvider: NetworkImage('http://1.15.86.128/resource/img/1/${initialIndex + (49 - index) * 10}.jpg'),
+                  imageProvider: NetworkImage('https://www.iMoments.com.cn/resource/img/1/${initialIndex + (49 - index) * 10}.jpg'),
                   initialScale: PhotoViewComputedScale.contained * 1,
                   minScale: PhotoViewComputedScale.contained * 1,
                 );

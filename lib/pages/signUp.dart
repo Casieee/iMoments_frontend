@@ -109,7 +109,7 @@ class SignUpPageState extends State<SignUpPage> {
                   onPressed: () async {
                     if(_signUpFormKey.currentState.validate()) {
                       print(1);
-                      var url = 'http://1.15.86.128:8080/register';
+                      var url = 'https://www.imoments.com.cn:8080/register';
                       var res = await http.post(url,
                           body: '{"username":"$_username","password":"$_firstPassword"}');
 
