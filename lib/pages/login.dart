@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:imoments/pages/userInfo.dart';
 import 'signUp.dart';
 
 class LoginPage extends StatefulWidget {
@@ -49,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
                       inputFormatters: [
                         FilteringTextInputFormatter.deny(RegExp("[ \\ ]")),
                       ],
-                      controller: _usernameController,
+                      controller: _usernameController..text = storage_userName,
                       decoration: InputDecoration(
                         labelText: '用户名',
                       ),
@@ -68,7 +69,7 @@ class _LoginPageState extends State<LoginPage> {
                       inputFormatters: [
                         FilteringTextInputFormatter.deny(RegExp("[ \\ ]")),
                       ],
-                      controller: _passwordController,
+                      controller: _passwordController..text = storage_password,
                       decoration: InputDecoration(
                         labelText: '密码',
                       ),
